@@ -1,0 +1,282 @@
+<!DOCTYPE html>
+<html lang="kn">
+<head>
+<meta charset="UTF-8">
+<title>5D ಕನ್ನಡ ಕ್ವಿಜ್ - 10 Second Winner Delay</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<style>
+/* 1. GLOBAL & 5D STYLES */
+body {
+  margin: 0; font-family: "Segoe UI", Arial, sans-serif;
+  background: radial-gradient(circle at center, #2a5298 0%, #1e3c72 100%);
+  min-height: 100vh; display: flex; justify-content: center; align-items: center;
+  overflow-x: hidden; perspective: 1200px;
+}
+.quiz-container-wrapper {
+  display: flex;
+  align-items: center; 
+  justify-content: center;
+  width: 100%;
+  max-width: 1200px;
+  padding: 40px 20px;
+}
+
+.main {
+  max-width: 650px;
+  width: 100%;
+  z-index: 2;
+}
+
+/* --- CHARACTER STYLING --- */
+.side-image {
+  width: 180px; 
+  height: auto;
+  z-index: 1;
+  pointer-events: none;
+  filter: drop-shadow(0 20px 15px rgba(0,0,0,0.5));
+}
+<audio id="beepSound">
+  <source src="https://www.soundjay.com/button/beep-07.wav" type="audio/wav">
+</audio>
+
+
+#leftImage {
+  margin-right: 15px;
+  animation: danceLeft 0.8s infinite alternate ease-in-out;
+}
+
+#rightImage {
+  margin-left: -29px; /* Pulls her closer to overlap the box */
+  z-index: 3;
+  /* scaleX(-1) mirrors the girl to face the quiz */
+  transform: scaleX(1); 
+  animation: danceRight 5s infinite alternate ease-in-out;
+}
+
+@keyframes danceLeft {
+  0% { transform: translateY(0) rotate(-4deg); }
+  100% { transform: translateY(-30px) rotate(4deg); }
+}
+transform: scaleX(-1) rotateY(20deg);
+@keyframes danceRight {
+  /* We MUST keep scaleX(-1) here so she stays mirrored while dancing */
+  0% { transform: scaleX(-1) translateY(0) rotate(4deg); }
+  100% { transform: scaleX(-1) translateY(-30px) rotate(0deg); }
+}
+
+/* 2. QUIZ BOX STYLES */
+.main { max-width: 600px; width: 100%; z-index: 1; transform-style: preserve-3d; }
+.quiz-box { background: rgba(255, 255, 255, 0.98); border-radius: 23px; box-shadow: 0 30px 60px rgba(0,0,0,0.4); overflow: hidden; border: 1px solid rgba(255,255,255,0.3); }
+.school-name { text-align: center; font-size: 28px; font-weight: 900; padding: 18px; background: linear-gradient(90deg, red, orange, yellow, green, blue, indigo, violet); background-size: 300% 100%; -webkit-background-clip: text; -webkit-text-fill-color: transparent; animation: rainbowFlow 4s linear infinite; }
+@keyframes rainbowFlow { 0% { background-position: 0% 50%; } 100% { background-position: 100% 50%; } 
+.counter{text-align:center;
+  font-weight:bold;
+  margin-bottom:1px;
+}}
+.quiz-header { display: flex; justify-content: space-between; padding: 8px 50px; background: #283593; color: #fff; }
+.option { width: 100%; padding: 8px; margin: 5px 0; border-radius: 15px; border: 2px solid #eee; background: white; font-size: 18px; font-weight: 600; cursor: pointer; transition: 0.3s; }
+.correct { background: #4caf50 !important; color: white; }
+.wrong { background: #f44336 !important; color: white; }
+
+/* 3. WINDOW OVERLAYS */
+#overlay {
+  position: fixed; inset: 0; background: rgba(0,0,0,0.95);
+  display: none; flex-direction: column; justify-content: center; align-items: center;
+  z-index: 1000; color: white; text-align: center;
+}
+.score-card { background: white; color: #333; padding: 30px; border-radius: 20px; width: 300px; margin-bottom: 20px; }
+.score-item { display: flex; justify-content: space-between; font-size: 22px; padding: 10px; border-bottom: 1px solid #ddd; }
+.countdown-txt { color: #ffca28; font-size: 18px; margin-top: 15px; }
+
+/* WINNER BOX */
+#winnerBox { display: none; text-align: center; animation: zoomIn 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
+@keyframes zoomIn { from { transform: scale(0); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+
+@media (max-width: 600px) { .side-image { display: none; } }
+</style>
+</head>
+
+<body>
+
+<div class="quiz-container-wrapper">
+  <img id="leftImage"  alt="" border="0" width="0" data-original-height="2" data-original-width="0"class="side-image" src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEhIGvN1ZAfKePyquxPZOc54mDm48HKT1GNpYaXZvuTh-8R6PacwHLHPfQ9InW2FTBqDHc7J-eVl6zX14Ppre2MXFrKNMu6l7saxVOueJDJf50g8ndC5EeV4UazRt_hskHCw7xsObnTC2BFqyPakzWkGr9TKTR7IOjTtbJLjfPvA14ujHmcBXJdB9O-1dkOY/s4096/vecteezy_beautiful-vintage-happy-child-playful-pose-professional_59923296.png">
+
+  <div class="main">
+    <div class="quiz-box">
+      <div class="school-name">ಸರ್ಕಾರಿ ಹಿರಿಯ ಪ್ರಾಥಮಿಕ ಶಾಲೆ, ದಾಸರವಾಡಿ</div>
+      <div class="quiz-header">
+        
+        <div style="background:#ffca28; color:#000; padding:5px 15px; border-radius:15px; font-weight:bold;">⏱ <span id="time">100</span>s</div>
+      <div id="qCounter" style="background:#fff;color:#283593;padding:5px 15px;border-radius:15px;font-weight:bold;">
+  1 / 100
+</div>
+
+      <button onclick="restartQuiz()" style="padding: 8px 18px; border-radius: 15px; border: none; background: #4caf50; color: white; font-size: 14px; cursor: pointer; font-weight: bold;">ಮರುಪ್ರಾರಂಭಿಸಿ</button></div>
+      <div style="padding: 30px; text-align: center;">
+        <h2 id="teamTurn" style="font-size: 32px; color:#283593;min-height: 5px;">ತಂಡ-1</h2>
+        <p id="question" style="font-size: 22px; color: #333; min-height: 30px;"></p>
+        <div id="options"></div>
+      </div>
+      <div style="font-size: 16px; display: grid; grid-template-columns: 5fr 1fr; background: #f9f9f9; padding: 10px; font-weight: bold; border-top: 1px solid #ddd;">
+        <div>ತಂಡ 1: <span id="s0">0</span></div><div>ತಂಡ 2: <span id="s1">0</span></div>
+        <div>ತಂಡ 3: <span id="s2">0</span></div><div>ತಂಡ 4: <span id="s3">0</span></div>
+      </div>
+    </div>
+  </div>
+
+  <img id="rightImage" class="side-image" src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEi1zbgMcWr8K20zWYmb4yAK_iYKjGiV5vMlhIfwEke22aOCX5El1xPH35g1Ve4eJD33qCdRujgkkylFHqm6cnes9yAXK4cIIP_qlJNzyZS92hsNpxMasPovNsMZK9XpUqvD_GZqWVJvvmACm8S1oXirnY0E9ejfvZYCQfvYg_6_cwKAXHVfeJ3pj8siiK8O/s320/lec2ev2svufb8cknjufvsvkkjq.png">
+</div>
+
+<div id="overlay">
+  <div id="scoreWindow">
+    <h1 style="color:#ffca28">ಅಂತಿಮ ಫಲಿತಾಂಶ (Final Scores)</h1>
+    <div class="score-card">
+      <div class="score-item"><span>ತಂಡ 1:</span> <b id="finalS0">0</b></div>
+      <div class="score-item"><span>ತಂಡ 2:</span> <b id="finalS1">0</b></div>
+      <div class="score-item"><span>ತಂಡ 3:</span> <b id="finalS2">0</b></div>
+      <div class="score-item"><span>ತಂಡ 4:</span> <b id="finalS3">0</b></div>
+    </div>
+    <p class="countdown-txt">ವಿಜೇತರ ಘೋಷಣೆ ಇನ್ನು <span id="waitTimer">10</span> ಸೆಕೆಂಡುಗಳಲ್ಲಿ...</p>
+  </div>
+
+  <div id="winnerBox">
+    <div style="font-size: 80px;">🏆</div>
+    <h1 style="font-size: 50px; color: #ffca28;">ಪ್ರಥಮ ಸ್ಥಾನ (1st Place)</h1>
+    <h2 id="winnerText" style="font-size: 45px; margin: 20px 0;"></h2>
+    <button onclick="restartQuiz()" style="padding: 15px 40px; border-radius: 35px; border: none; background: #4caf50; color: white; font-size: 22px; cursor: pointer; font-weight: bold;">ಮರುಪ್ರಾರಂಭಿಸಿ</button>
+  </div>
+</div>
+
+<script>
+const questions = [
+{q:"ಭಾರತದ ರಾಜಧಾನಿ ಯಾವುದು?",o:["ಮುಂಬೈ","ನವದೆಹಲಿ","ಚೆನ್ನೈ","ಕೋಲ್ಕತ್ತಾ"],a:1},
+{q:"ಕರ್ನಾಟಕದ ರಾಜಧಾನಿ ಯಾವುದು?",o:["ಮೈಸೂರು","ಬೆಂಗಳೂರು","ಹುಬ್ಬಳ್ಳಿ","ಮಂಗಳೂರು"],a:1},
+{q:"ಭಾರತದ ರಾಷ್ಟ್ರಪತಿ ಯಾರು?",o:["ನರೇಂದ್ರ ಮೋದಿ","ದ್ರೌಪದಿ ಮುರ್ಮು","ಅಮಿತ್ ಶಾ","ರಾಹುಲ್ ಗಾಂಧಿ"],a:1},
+{q:"ಭಾರತದ ರಾಷ್ಟ್ರೀಯ ಹೂವು ಯಾವುದು?",o:["ಗುಲಾಬಿ","ಕಮಲ","ಮಲ್ಲಿಗೆ","ಸೂರ್ಯಕಾಂತಿ"],a:1},
+{q:"ಭಾರತದ ರಾಷ್ಟ್ರೀಯ ಪಕ್ಷಿ ಯಾವುದು?",o:["ಕಾಗೆ","ನವಿಲು","ಹಂಸ","ಗಿಡುಗ"],a:1},
+{q:"ಭಾರತದ ರಾಷ್ಟ್ರೀಯ ಪ್ರಾಣಿ ಯಾವುದು?",o:["ಸಿಂಹ","ಹುಲಿ","ಆನೆ","ಚಿರತೆ"],a:1},
+{q:"ಕರ್ನಾಟಕದ ರಾಜ್ಯ ಹೂವು ಯಾವುದು?",o:["ಕಮಲ","ಮಲ್ಲಿಗೆ","ಕಣಗಲೆ","ಅಶೋಕ"],a:2},
+{q:"ಕರ್ನಾಟಕದ ರಾಜ್ಯ ಪ್ರಾಣಿ ಯಾವುದು?",o:["ಆನೆ","ಹುಲಿ","ಸಿಂಹ","ಕರಡಿ"],a:1},
+{q:"ಭಾರತದ ಅತಿದೊಡ್ಡ ರಾಜ್ಯ ಯಾವುದು?",o:["ಮಹಾರಾಷ್ಟ್ರ","ಮಧ್ಯಪ್ರದೇಶ","ಉತ್ತರ ಪ್ರದೇಶ","ರಾಜಸ್ಥಾನ"],a:3},
+{q:"ಭಾರತದ ಅತಿ ಚಿಕ್ಕ ರಾಜ್ಯ ಯಾವುದು?",o:["ಗೋವಾ","ಸಿಕ್ಕಿಂ","ತ್ರಿಪುರಾ","ಮಣಿಪುರ"],a:0},
+
+{q:"ಭಾರತದ ರಾಷ್ಟ್ರೀಯ ಗೀತೆ ಯಾರು ಬರೆದವರು?",o:["ರಬೀಂದ್ರನಾಥ ಟ್ಯಾಗೋರ್","ಬಂಕಿಂಚಂದ್ರ ಚಟರ್ಜಿ","ಸರ್ವಪಳ್ಳಿ","ವಿವೇಕಾನಂದ"],a:0},
+{q:"ಭಾರತದ ಧ್ವಜದಲ್ಲಿ ಎಷ್ಟು ಬಣ್ಣಗಳಿವೆ?",o:["2","3","4","5"],a:1},
+{q:"ಆಕಾಶದಲ್ಲಿ ಸೂರ್ಯ ಯಾವ ಗ್ರಹಕ್ಕೆ ಸೇರಿದೆ?",o:["ಭೂಮಿ","ಚಂದ್ರ","ಸೌರಮಂಡಲ","ಆಕಾಶಗಂಗಾ"],a:2},
+{q:"ಭೂಮಿಗೆ ಅತ್ಯಂತ ಹತ್ತಿರದ ಗ್ರಹ ಯಾವುದು?",o:["ಶುಕ್ರ","ಮಂಗಳ","ಬುಧ","ಗುರು"],a:2},
+{q:"ಮಾನವನ ದೇಹದಲ್ಲಿ ಎಷ್ಟು ಹೃದಯಗಳಿವೆ?",o:["1","2","3","4"],a:0},
+{q:"ಮಾನವನ ರಕ್ತದ ಬಣ್ಣ ಏಕೆ ಕೆಂಪು?",o:["ಆಮ್ಲಜನಕ","ಹೆಮೋಗ್ಲೋಬಿನ್","ನೀರು","ಕಾರ್ಬನ್"],a:1},
+{q:"ನೀರು ಯಾವ ಸ್ಥಿತಿಗಳಲ್ಲಿ ಕಂಡುಬರುತ್ತದೆ?",o:["ಘನ","ದ್ರವ","ವಾಯು","ಎಲ್ಲವೂ"],a:3},
+{q:"ಭಾರತದ ರಾಷ್ಟ್ರೀಯ ಆಟ ಯಾವುದು?",o:["ಕ್ರಿಕೆಟ್","ಹಾಕಿ","ಕಬಡ್ಡಿ","ಫುಟ್ಬಾಲ್"],a:1},
+{q:"ಒಲಿಂಪಿಕ್ಸ್ ಎಷ್ಟು ವರ್ಷಕ್ಕೊಮ್ಮೆ ನಡೆಯುತ್ತದೆ?",o:["2","3","4","5"],a:2},
+{q:"ಭಾರತದ ಮೊದಲ ಪ್ರಧಾನಿ ಯಾರು?",o:["ಗಾಂಧೀಜಿ","ಜವಾಹರಲಾಲ್ ನೆಹರು","ಪಟೇಲ್","ರಾಜೇಂದ್ರ ಪ್ರಸಾದ್"],a:1},
+
+/* ---- 80 MORE QUESTIONS ---- */
+];
+
+let qIndex=0, scores=[0,0,0,0], timer, timeLeft=60, isPaused=false, lock=false;
+
+
+function loadQuestion() {
+  if(qIndex >= questions.length) { showScoreList(); return; }
+  document.getElementById("qCounter").innerText =
+  (qIndex + 1) + " / " + questions.length;
+
+  lock = false; let team = qIndex % 4;
+  document.getElementById("teamTurn").innerText = "ತಂಡ-" + (team+1);
+  document.getElementById("question").innerText = questions[qIndex].q;
+  const optDiv = document.getElementById("options"); optDiv.innerHTML = "";
+  questions[qIndex].o.forEach((opt, i) => {
+    let btn = document.createElement("button"); btn.className = "option"; btn.innerText = opt;
+    btn.onclick = () => checkAnswer(i, team, btn); optDiv.appendChild(btn);
+  });
+  startTimer();
+}
+
+function startTimer() {
+  clearInterval(timer);
+
+  timeLeft = 60;   // 60 seconds per question
+  document.getElementById("time").innerText = timeLeft;
+
+  const quizBox = document.querySelector(".quiz-box");
+
+  timer = setInterval(() => {
+    timeLeft--;
+    document.getElementById("time").innerText = timeLeft;
+
+    // 🔴 Last 10 sec red flash
+    if(timeLeft <= 10) {
+      quizBox.style.background = timeLeft % 2 === 0 ? 'rgba(255,0,0,0.5)' : 'rgba(255,255,255,0.98)';
+    }
+
+    // 🔊 Last 5 sec beep
+    if(timeLeft <= 5 && timeLeft > 0) {
+      document.getElementById("beepSound").play();
+    }
+
+    // auto next question
+    if (timeLeft <= 0) {
+      clearInterval(timer);
+      quizBox.style.background = 'rgba(255,255,255,0.98)'; // reset background
+      qIndex++;
+      loadQuestion();
+    }
+  }, 1000);
+}
+
+
+
+function checkAnswer(i, team, btn) {
+  if(lock || isPaused) return; lock = true; clearInterval(timer);
+  let correct = questions[qIndex].a;
+  if(i === correct) { btn.classList.add("correct"); scores[team]++; document.getElementById("s"+team).innerText = scores[team]; }
+  else { btn.classList.add("wrong"); document.querySelectorAll(".option")[correct].classList.add("correct"); }
+  setTimeout(() => { qIndex++; loadQuestion(); }, 1200);
+}
+
+// STEP 1: SHOW SCORE LIST
+function showScoreList() {
+  document.getElementById("overlay").style.display = "flex";
+  document.getElementById("scoreWindow").style.display = "block";
+  document.getElementById("winnerBox").style.display = "none";
+  
+  for(let i=0; i<4; i++) { document.getElementById("finalS"+i).innerText = scores[i]; }
+
+  let waitTime = 10;
+  let waitInt = setInterval(() => {
+    waitTime--;
+    document.getElementById("waitTimer").innerText = waitTime;
+    if(waitTime <= 0) {
+      clearInterval(waitInt);
+      showFirstWinner();
+    }
+  }, 1000);
+}
+
+// STEP 2: SHOW 1ST PLACE WINNER
+function showFirstWinner() {
+  document.getElementById("scoreWindow").style.display = "none";
+  document.getElementById("winnerBox").style.display = "block";
+  
+  let maxScore = Math.max(...scores);
+  let winners = [];
+  scores.forEach((s, i) => { if(s === maxScore && maxScore > 0) winners.push("ತಂಡ " + (i+1)); });
+  
+  document.getElementById("winnerText").innerHTML = winners.length > 0 ? winners.join(" & ") + "<br><small>ಅಂಕಗಳು: "+maxScore+"</small>" : "ಯಾರೂ ಗೆದ್ದಿಲ್ಲ!";
+}
+
+function restartQuiz() {
+  qIndex = 0; scores = [0,0,0,0];
+  for(let i=0; i<4; i++) document.getElementById("s"+i).innerText = 0;
+  document.getElementById("overlay").style.display = "none";
+  loadQuestion();
+}
+
+function togglePause() { isPaused = !isPaused; }
+loadQuestion();
+</script>
+
+</body>
+</html>

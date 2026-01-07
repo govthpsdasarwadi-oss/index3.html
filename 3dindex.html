@@ -275,8 +275,12 @@ function restartQuiz() {
 }
 
 function togglePause() { isPaused = !isPaused; }
-loadQuestion();
-</script>
+loadQuestion();document.addEventListener("contextmenu", function (e) {
+    e.preventDefault();
 
+    alert("⚠️ Right-click is disabled🙏");
+  });
+window.onload = loadQuestion;
+</script>
 </body>
 </html>
